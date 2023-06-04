@@ -51,7 +51,12 @@ namespace Catalog_Service.Controllers
         {
             var categoryItemData = await _categoryItemService.GetCategoryItemAsync(categoryId, itemId);
 
-            if (categoryItemData == null)
+            if (categoryItemData.CategoryId == null)
+            {
+                return NotFound(string.Format(ObjectResultMessages.CategoryNotFound, categoryId));
+            }
+
+            if (categoryItemData.ItemId == null)
             {
                 return NotFound(string.Format(ObjectResultMessages.CategoryItemNotFoundInCategory, itemId, categoryId));
             }

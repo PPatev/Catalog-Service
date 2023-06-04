@@ -7,7 +7,7 @@ namespace Catalog_Service.Interfaces
     {
         Task<IEnumerable<CategoryItemDetailsDto?>?> GetCategoryItemsAsync(int categoryId, int pageIndex, int pageSize);
 
-        Task<CategoryItemDetailsDto?> GetCategoryItemAsync(int categoryId, int itemId);
+        Task<CategoryItemDetailsDto> GetCategoryItemAsync(int categoryId, int itemId);
 
         Task<CategoryItemDetailsDto?> CreateCategoryItemAsync(CreateItemModel createItemModel);
 

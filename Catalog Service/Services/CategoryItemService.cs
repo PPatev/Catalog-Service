@@ -33,7 +33,7 @@ namespace Catalog_Service.Services
             return categoryItems;
         }
 
-        public async Task<CategoryItemDetailsDto?> GetCategoryItemAsync(int categoryId, int itemId)
+        public async Task<CategoryItemDetailsDto> GetCategoryItemAsync(int categoryId, int itemId)
         {
             var categoryItemDto = new CategoryItemDetailsDto();
 
@@ -68,7 +68,7 @@ namespace Catalog_Service.Services
                 return null;
             }
 
-            var categoryItem = new CategoryItem { Name = createItemModel.ItemName };
+            var categoryItem = new CategoryItem { CategoryId = category.Id, Name = createItemModel.ItemName };
             category.CategoryItems.Add(categoryItem);
 
             await _categoriesRepository.SaveAsync();
@@ -122,6 +122,10 @@ namespace Catalog_Service.Services
             if (category != null)
             {
                 deleteItemDto.CategoryId = category.Id;
+            }
+            else
+            {
+                return deleteItemDto;
             }
 
             var categoryItem = category?.CategoryItems.SingleOrDefault(x => x.Id == itemId);

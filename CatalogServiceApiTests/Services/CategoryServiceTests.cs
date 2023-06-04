@@ -1,17 +1,12 @@
 ﻿using AutoFixture;
-using Catalog_Service.Data;
 using Catalog_Service.Data.Entities;
 using Catalog_Service.Interfaces;
 using Catalog_Service.Models.Crud;
 using Catalog_Service.Models.Dtos;
-using Catalog_Service.Repositories;
 using Catalog_Service.Services;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore;
 using Moq;
-using Moq.EntityFrameworkCore;
 using NUnit.Framework;
-using System.Reflection.Metadata;
 
 namespace CatalogServiceApiTests.Services
 {
@@ -28,7 +23,7 @@ namespace CatalogServiceApiTests.Services
         public void Setup()
         {
             _fixture = new Fixture();
-            _categoriesData = CreateData();
+            _categoriesData = TestHelper.CreateData(_fixture);
             _categoriesRepoMock = new Mock<ICategoriesRepository>();
 
             _categoryService = new CategoryService(_categoriesRepoMock.Object);
@@ -172,24 +167,5 @@ namespace CatalogServiceApiTests.Services
             resultDto.CategoryId.Should().BeNull();
             _categoriesRepoMock.Verify(x => x.GetByIdAsync(categoryId), Times.Once);
         }
-
-        private IEnumerable<Category> CreateData()
-        {
-            var categories = new List<Category>();
-            
-            for (int i = 1; i <= 20; i++)
-            {
-                var category = new Category { Id = i, Name = _fixture.Create<string>(), CategoryItems = new List<CategoryItem>() };
-                for (int j = 1; j <= 20; j++)
-                {
-                    category.CategoryItems.Add(new CategoryItem { Id = (i * 100 + j), Name = _fixture.Create<string>() });
-                }
-
-                categories.Add(category);
-            }
-
-            return categories;
-        }
-
     }
 }
