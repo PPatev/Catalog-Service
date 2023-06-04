@@ -8,7 +8,7 @@ namespace Catalog_Service.Data
         {
             using (IServiceScope scope = serviceScopeFactory.CreateScope())
             {
-                CatalogContext context = scope.ServiceProvider.GetRequiredService<CatalogContext>();
+                CatalogDbContext context = scope.ServiceProvider.GetRequiredService<CatalogDbContext>();
                 context.Database.EnsureCreated();
 
                 var categories = new List<Category>();

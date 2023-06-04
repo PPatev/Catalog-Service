@@ -14,18 +14,15 @@ namespace Catalog_Service.Controllers
     public class ItemsController : ControllerBase
     {
         private readonly ILogger<CategoriesController> _logger;
-        private readonly CatalogContext _context;
         private readonly ICategoryItemService _categoryItemService;
 
-        public ItemsController(ILogger<CategoriesController> logger, CatalogContext context, ICategoryItemService categoryItemService)
+        public ItemsController(ILogger<CategoriesController> logger, CatalogDbContext context, ICategoryItemService categoryItemService)
         {
             _logger = logger;
-            _context = context;
             _categoryItemService = categoryItemService;
         }
 
         [HttpGet(Name = nameof(GetItems))]
-        [ResponseCache(Duration = 60)]
         [ProducesResponseType(typeof(IEnumerable<CategoryItemDetailsDto>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [SwaggerResponse(StatusCodes.Status200OK)]
@@ -33,7 +30,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetItems(int categoryId, [FromQuery] int pageIndex = 0, [FromQuery] int pageSize = 5)
         {
-            var categoryItems = await _categoryItemService.GetCategoryItems(categoryId, pageIndex, pageSize);
+            var categoryItems = await _categoryItemService.GetCategoryItemsAsync(categoryId, pageIndex, pageSize);
 
             if (categoryItems == null)
             {
@@ -52,7 +49,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetItem(int categoryId, int itemId)
         {
-            var categoryItemData = await _categoryItemService.GetCategoryItem(categoryId, itemId);
+            var categoryItemData = await _categoryItemService.GetCategoryItemAsync(categoryId, itemId);
 
             if (categoryItemData == null)
             {
@@ -72,7 +69,7 @@ namespace Catalog_Service.Controllers
         {
             createItemModel.CategoryId = categoryId;
 
-            var categoryItemDto = await _categoryItemService.CreateCategoryItem(createItemModel);
+            var categoryItemDto = await _categoryItemService.CreateCategoryItemAsync(createItemModel);
 
             if (categoryItemDto == null)
             {
@@ -93,7 +90,7 @@ namespace Catalog_Service.Controllers
             updateItemModel.CategoryId = categoryId;
             updateItemModel.ItemId = itemId;
 
-            var updateItemDto = await _categoryItemService.UpdateCategoryItem(updateItemModel);
+            var updateItemDto = await _categoryItemService.UpdateCategoryItemAsync(updateItemModel);
 
             if (updateItemDto.CategoryId == null)
             {
@@ -116,7 +113,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCategoryItem(int categoryId, int itemId)
         {
-            var deleteItemDto = await _categoryItemService.DeleteCategoryItem(categoryId, itemId);
+            var deleteItemDto = await _categoryItemService.DeleteCategoryItemAsync(categoryId, itemId);
             if (deleteItemDto.CategoryId == null)
             {
                 return NotFound(string.Format(ObjectResultMessages.CategoryNotFound, categoryId));

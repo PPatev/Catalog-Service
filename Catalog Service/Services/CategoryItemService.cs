@@ -1,66 +1,68 @@
-﻿using Catalog_Service.Data;
-using Catalog_Service.Data.Entities;
+﻿using Catalog_Service.Data.Entities;
 using Catalog_Service.Interfaces;
 using Catalog_Service.Models.Crud;
 using Catalog_Service.Models.Dtos;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Catalog_Service.Services
 {
     public class CategoryItemService : ICategoryItemService
     {
-        private readonly CatalogContext _context;
+        private readonly ICategoriesRepository _categoriesRepository;
 
-        public CategoryItemService(CatalogContext context)
+        public CategoryItemService(ICategoriesRepository categoriesRepository)
         {
-            _context = context;
+            _categoriesRepository = categoriesRepository;
         }
 
-        public async Task<IEnumerable<CategoryItemDetailsDto?>?> GetCategoryItems(int categoryId, int pageIndex, int pageSize)
+        public async Task<IEnumerable<CategoryItemDetailsDto?>?> GetCategoryItemsAsync(int categoryId, int pageIndex, int pageSize)
         {
-            var categoryData = await _context.Categories.AsNoTracking().Where(x => x.Id == categoryId).Select(x => new
-            {
-                Items = x.CategoryItems.Select(y => new CategoryItemDetailsDto
-                {
-                    ItemId = y.Id,
-                    ItemName = y.Name,
-                    CategoryId = y.CategoryId,
-                    CategoryName = x.Name
-                }).Skip(pageSize * pageIndex).Take(pageSize).ToList()
-            }).SingleOrDefaultAsync();
-
-            if (categoryData == null)
+            var category = await _categoriesRepository.GetByIdAsync(categoryId);
+            if (category == null)
             {
                 return null;
             }
 
-            var categoryItems = categoryData.Items;
-
-            return categoryItems;
-        }
-
-        public async Task<CategoryItemDetailsDto?> GetCategoryItem(int categoryId, int itemId)
-        {
-            var categoryItemData = await _context.CategoryItems.AsNoTracking().Where(x => x.Id == itemId).Select(x => new CategoryItemDetailsDto
+            var categoryItems = category.CategoryItems.Skip(pageSize * pageIndex).Take(pageSize).Select(x => new CategoryItemDetailsDto
             {
                 ItemId = x.Id,
                 ItemName = x.Name,
                 CategoryId = x.CategoryId,
-                CategoryName = x.Category.Name
-            }).SingleOrDefaultAsync();
+                CategoryName = category.Name
+            }).ToList();
 
-            if (categoryItemData == null || categoryItemData.CategoryId != categoryId)
-            {
-                return null;
-            }
-
-            return categoryItemData;
+            return categoryItems;
         }
 
-        public async Task<CategoryItemDetailsDto?> CreateCategoryItem(CreateItemModel createItemModel)
+        public async Task<CategoryItemDetailsDto?> GetCategoryItemAsync(int categoryId, int itemId)
         {
-            var category = await _context.Categories.Include(x => x.CategoryItems).SingleOrDefaultAsync(x => x.Id == createItemModel.CategoryId);
+            var categoryItemDto = new CategoryItemDetailsDto();
+
+            var category = await _categoriesRepository.GetByIdAsync(categoryId);
+
+            if (category == null)
+            {
+                return categoryItemDto;
+            }
+
+            categoryItemDto.CategoryId = category.Id;
+            var categoryItem = category.CategoryItems.SingleOrDefault(x => x.Id == itemId);
+
+            if (categoryItem == null)
+            {
+                return categoryItemDto;
+            }
+
+            categoryItemDto.ItemId = categoryItem.Id;
+            categoryItemDto.ItemName = categoryItem.Name;
+            categoryItemDto.CategoryName = categoryItem.Category.Name;
+
+            return categoryItemDto;
+        }
+
+        public async Task<CategoryItemDetailsDto?> CreateCategoryItemAsync(CreateItemModel createItemModel)
+        {
+            var category = await _categoriesRepository.GetByIdAsync(createItemModel.CategoryId);
+                
             if (category == null)
             {
                 return null;
@@ -69,7 +71,7 @@ namespace Catalog_Service.Services
             var categoryItem = new CategoryItem { Name = createItemModel.ItemName };
             category.CategoryItems.Add(categoryItem);
 
-            await _context.SaveChangesAsync();
+            await _categoriesRepository.SaveAsync();
 
             var categoryItemDto = new CategoryItemDetailsDto
             {
@@ -82,11 +84,11 @@ namespace Catalog_Service.Services
             return categoryItemDto;
         }
 
-        public async Task<UpdateCategoryItemDto> UpdateCategoryItem(UpdateItemModel updateItemModel)
+        public async Task<UpdateCategoryItemDto> UpdateCategoryItemAsync(UpdateItemModel updateItemModel)
         {
             var updateItemDto = new UpdateCategoryItemDto();
 
-            var category = await _context.Categories.Include(x => x.CategoryItems).SingleOrDefaultAsync(x => x.Id == updateItemModel.CategoryId);
+            var category = await _categoriesRepository.GetByIdAsync(updateItemModel.CategoryId);
 
             if (category == null)
             {
@@ -102,7 +104,7 @@ namespace Catalog_Service.Services
             }
 
             categoryItem.Name = updateItemModel.ItemName;
-            await _context.SaveChangesAsync();
+            await _categoriesRepository.SaveAsync();
 
             updateItemDto.ItemId = categoryItem.Id;
             updateItemDto.ItemName = categoryItem.Name;
@@ -111,11 +113,11 @@ namespace Catalog_Service.Services
             return updateItemDto;
         }
 
-        public async Task<DeleteCategoryItemDto> DeleteCategoryItem(int categoryId, int itemId)
+        public async Task<DeleteCategoryItemDto> DeleteCategoryItemAsync(int categoryId, int itemId)
         {
             var deleteItemDto = new DeleteCategoryItemDto();
 
-            var category = await _context.Categories.Include(x => x.CategoryItems).SingleOrDefaultAsync(x => x.Id == categoryId);
+            var category = await _categoriesRepository.GetByIdAsync(categoryId);
 
             if (category != null)
             {
@@ -127,9 +129,13 @@ namespace Catalog_Service.Services
             {
                 deleteItemDto.ItemId = categoryItem.Id;
             }
+            else
+            {
+                return deleteItemDto;
+            }
 
             category?.CategoryItems.Remove(categoryItem);
-            await _context.SaveChangesAsync();
+            await _categoriesRepository.SaveAsync();
 
             return deleteItemDto;
         }

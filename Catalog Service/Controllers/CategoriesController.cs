@@ -29,7 +29,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCategories()
         {
-            var categoryDtos = await _categoryService.GetAllCategories();
+            var categoryDtos = await _categoryService.GetAllCategoriesAsync();
 
             return Ok(categoryDtos);
         }
@@ -43,7 +43,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetCategory(int categoryId)
         {
-            var categoryDto = await _categoryService.GetCategory(categoryId);
+            var categoryDto = await _categoryService.GetCategoryAsync(categoryId);
 
             if (categoryDto == null) 
             {
@@ -59,7 +59,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> CreateCategory([FromBody] CreateCategoryModel createCategoryModel)
         {
-            var categoryDto = await _categoryService.CreateCategory(createCategoryModel);
+            var categoryDto = await _categoryService.CreateCategoryAsync(createCategoryModel);
 
             return CreatedAtRoute(nameof(GetCategory), new { CategoryId = categoryDto.CategoryId }, categoryDto);
         }
@@ -74,7 +74,7 @@ namespace Catalog_Service.Controllers
         {
             updateCategoryModel.Id = categoryId;
 
-            var updateCategoryDto = await _categoryService.UpdateCategory(updateCategoryModel);
+            var updateCategoryDto = await _categoryService.UpdateCategoryAsync(updateCategoryModel);
 
             if (updateCategoryDto.CategoryId == null)
             {
@@ -92,7 +92,7 @@ namespace Catalog_Service.Controllers
         [SwaggerResponse(StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> DeleteCategory(int categoryId)
         {
-            var deleteCategoryDto = await _categoryService.DeleteCategory(categoryId);
+            var deleteCategoryDto = await _categoryService.DeleteCategoryAsync(categoryId);
 
             if (deleteCategoryDto.CategoryId == null)
             {

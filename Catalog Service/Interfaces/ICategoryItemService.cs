@@ -5,14 +5,14 @@ namespace Catalog_Service.Interfaces
 {
     public interface ICategoryItemService
     {
-        Task<IEnumerable<CategoryItemDetailsDto?>?> GetCategoryItems(int categoryId, int pageIndex, int pageSize);
+        Task<IEnumerable<CategoryItemDetailsDto?>?> GetCategoryItemsAsync(int categoryId, int pageIndex, int pageSize);
 
-        Task<CategoryItemDetailsDto?> GetCategoryItem(int categoryId, int itemId);
+        Task<CategoryItemDetailsDto?> GetCategoryItemAsync(int categoryId, int itemId);
 
-        Task<CategoryItemDetailsDto?> CreateCategoryItem(CreateItemModel createItemModel);
+        Task<CategoryItemDetailsDto?> CreateCategoryItemAsync(CreateItemModel createItemModel);
 
-        Task<UpdateCategoryItemDto> UpdateCategoryItem(UpdateItemModel updateItemModel);
+        Task<UpdateCategoryItemDto> UpdateCategoryItemAsync(UpdateItemModel updateItemModel);
 
-        Task<DeleteCategoryItemDto> DeleteCategoryItem(int categoryId, int itemId);
+        Task<DeleteCategoryItemDto> DeleteCategoryItemAsync(int categoryId, int itemId);
     }
 }

@@ -1,6 +1,7 @@
 using Catalog_Service.Data;
 using Catalog_Service.Filters;
 using Catalog_Service.Interfaces;
+using Catalog_Service.Repositories;
 using Catalog_Service.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Versioning;
@@ -30,9 +31,9 @@ namespace Catalog_Service
                 options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
             });
 
-            builder.Services.AddResponseCaching();
+            //builder.Services.AddResponseCaching();
 
-            builder.Services.AddDbContext<CatalogContext>(opt =>
+            builder.Services.AddDbContext<CatalogDbContext>(opt =>
                 opt.UseInMemoryDatabase("Catalog"));
 
             builder.Services.AddEndpointsApiExplorer();
@@ -40,6 +41,7 @@ namespace Catalog_Service
 
             builder.Services.AddScoped<ICategoryService, CategoryService>();
             builder.Services.AddScoped<ICategoryItemService, CategoryItemService>();
+            builder.Services.AddScoped<ICategoriesRepository, CategoriesRepository>();
 
             var app = builder.Build();
 
@@ -52,7 +54,7 @@ namespace Catalog_Service
 
             app.UseHttpsRedirection();
 
-            app.UseResponseCaching();
+            //app.UseResponseCaching();
            
             app.MapControllers();
 

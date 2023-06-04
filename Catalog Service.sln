@@ -5,6 +5,8 @@ VisualStudioVersion = 17.5.33530.505
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogServiceApi", "Catalog Service\CatalogServiceApi.csproj", "{710FFA41-0AE0-4943-8916-C574D64CFA8B}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CatalogServiceApiTests", "CatalogServiceApiTests\CatalogServiceApiTests.csproj", "{B4D5FD9E-1051-4589-96FD-2BE8E934FA9A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +17,10 @@ Global
 		{710FFA41-0AE0-4943-8916-C574D64CFA8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{710FFA41-0AE0-4943-8916-C574D64CFA8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{710FFA41-0AE0-4943-8916-C574D64CFA8B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B4D5FD9E-1051-4589-96FD-2BE8E934FA9A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B4D5FD9E-1051-4589-96FD-2BE8E934FA9A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B4D5FD9E-1051-4589-96FD-2BE8E934FA9A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B4D5FD9E-1051-4589-96FD-2BE8E934FA9A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
