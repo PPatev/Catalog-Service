@@ -31,7 +31,7 @@ namespace Catalog_Service
                 options.ApiVersionSelector = new CurrentImplementationApiVersionSelector(options);
             });
 
-            //builder.Services.AddResponseCaching();
+            builder.Services.AddResponseCaching();
 
             builder.Services.AddDbContext<CatalogDbContext>(opt =>
                 opt.UseInMemoryDatabase("Catalog"));
@@ -54,7 +54,7 @@ namespace Catalog_Service
 
             app.UseHttpsRedirection();
 
-            //app.UseResponseCaching();
+            app.UseResponseCaching();
            
             app.MapControllers();
 
