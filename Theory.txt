@@ -1,0 +1,220 @@
+1) Explain the difference between terms: REST and RESTful.
+
+REST stands for representational state transfer. 
+It is a set of constraints that set out how an API (application programming interface) should work. 
+If an API is RESTful, that simply means that the API adheres to the REST architecture. 
+Put simply, there are no differences between REST and RESTful as far as APIs are concerned. 
+REST is the set of constraints. RESTful refers to an API adhering to those constraints. 
+
+2) What are the six constraints?
+
+2.1) Uniform Interface
+The uniform interface constraint defines the interface between clients and servers. 
+The four guiding principles of the uniform interface are:
+ - Resource-Based
+ Individual resources are identified in requests using URIs as resource identifiers. 
+ The resources themselves are conceptually separate from the representations that are returned to the client.
+ - Manipulation of Resources Through Representations
+ When a client holds a representation of a resource, including any metadata attached, 
+ it has enough information to modify or delete the resource on the server, 
+ provided it has permission to do so.
+ - Self-descriptive Messages
+Each message includes enough information to describe how to process the message.
+ - Hypermedia as the Engine of Application State (HATEOAS)
+Clients deliver state via body contents, query-string parameters, request headers and the requested URI (the resource name). 
+Services deliver state to clients via body content, response codes, and response headers. 
+This is technically referred-to as hypermedia (or hyperlinks within hypertext).
+
+2.2) Stateless
+What this means is that the necessary state to handle the request is contained within the request itself, 
+whether as part of the URI, query-string parameters, body, or headers. 
+The URI uniquely identifies the resource and the body contains the state (or state change) of that resource.
+Then after the server does it's processing, the appropriate state, or the piece(s) of state that matter, 
+are communicated back to the client via headers, status and response body.
+
+2.3) Cacheable
+Clients can cache responses. Responses must therefore, implicitly or explicitly, define themselves as cacheable, 
+or not, to prevent clients reusing stale or inappropriate data in response to further requests. 
+Well-managed caching partially or completely eliminates some client–server interactions, further improving scalability and performance.
+
+2.4) Client-Server
+The uniform interface separates clients from servers. This separation of concerns means that, 
+for example, clients are not concerned with data storage, which remains internal to each server, 
+so that the portability of client code is improved. Servers are not concerned with the user interface or user state, 
+so that servers can be simpler and more scalable. Servers and clients may also be replaced and developed independently, 
+as long as the interface is not altered.
+
+2.5) Layered System
+A client cannot ordinarily tell whether it is connected directly to the end server, or to an intermediary along the way. 
+Intermediary servers may improve system scalability by enabling load-balancing and by providing shared caches. 
+Layers may also enforce security policies.
+
+2.6) Code on Demand (optional)
+Servers are able to temporarily extend or customize the functionality of a client by transferring logic to it that it can execute.
+Examples of this may include compiled components such as Java applets and client-side scripts such as JavaScript.
+
+3) Is HTTP the only protocol supported by REST?
+REST is an architectural style that was created in tandem with HTTP and most typically employs HTTP as its application layer protocol. 
+However, REST isn’t always linked to HTTP. Other transfer protocols, such as FTP, SMTP, etc. can also be used.
+
+4) HTTP Request Methods (the difference) and HTTP Response codes. What is idempotency?
+
+4.1) GET
+GET (along with HEAD) requests are used only to read data and not change it. Therefore, when used this way, they are considered safe. 
+That is, they can be called without risk of data modification or corruption—calling it once has the same effect as calling it 10 times, 
+or none at all. Additionally, GET (and HEAD) is idempotent, 
+which means that making multiple identical requests ends up having the same result as a single request.
+
+4.2) POST
+POST verb is most-often utilized to create new resources. In particular, it's used to create subordinate resources.
+That is, subordinate to some other (e.g. parent) resource. In other words, when creating a new resource, 
+POST to the parent and the service takes care of associating the new resource with the parent, 
+assigning an ID (new resource URI), etc. On successful creation, return HTTP status 201, 
+returning a Location header with a link to the newly-created resource with the 201 HTTP status.
+POST is neither safe nor idempotent. It is therefore recommended for non-idempotent resource requests. 
+Making two identical POST requests will most-likely result in two resources containing the same information.
+
+4.3) PUT
+PUT is most-often utilized for update capabilities, 
+PUT-ing to a known resource URI with the request body containing the newly-updated representation of the original resource.
+However, PUT can also be used to create a resource in the case where the resource ID is chosen by the client instead of by the server.
+PUT is not a safe operation, in that it modifies (or creates) state on the server, but it is idempotent. 
+In other words, if you create or update a resource using PUT and then make that same call again, 
+the resource is still there and still has the same state as it did with the first call.
+
+4.4) PATCH
+PATCH is used for modify capabilities. The PATCH request only needs to contain the changes to the resource, 
+not the complete resource. 
+This resembles PUT, but the body contains a set of instructions describing how a resource 
+currently residing on the server should be modified to produce a new version. 
+PATCH is neither safe nor idempotent. However, a PATCH request can be issued in such a way as to be idempotent,
+which also helps prevent bad outcomes from collisions between two PATCH requests on the same resource in a similar time frame.
+
+4.5) DELETE
+Used to delete a resource identified by a URI.
+DELETE operations are idempotent. If you DELETE a resource, it's removed. 
+Repeatedly calling DELETE on that resource ends up the same: the resource is gone.
+
+4.6) HEAD
+The HEAD method is identical to GET except that the server MUST NOT send content in the response. 
+HEAD is used to obtain metadata about the selected representation without transferring its representation data.
+
+4.7) OPTIONS
+The OPTIONS method requests information about the communication options available for the target resource, 
+at either the origin server or an intervening intermediary. 
+This method allows a client to determine the options and/or requirements associated with a resource, 
+or the capabilities of a server, without implying a resource action
+
+4.8) TRACE
+The TRACE method requests a remote, application-level loop-back of the request message. 
+TRACE allows the client to see what is being received at the other end of the request chain 
+and use that data for testing or diagnostic information. 
+A client MUST NOT send content in a TRACE request. Responses to the TRACE method are not cacheable.
+
+4.9) CONNECT
+The CONNECT method requests that the recipient establish a tunnel to the destination origin server 
+identified by the request target and, if successful, thereafter restrict its behavior to blind forwarding of data, 
+in both directions, until the tunnel is closed. Tunnels are commonly used to create an end-to-end virtual connection, 
+through one or more proxies, which can then be secured using TLS (Transport Layer Security).
+
+---------------------------
+HTTP Response Codes
+
+Response codes are issued by a server in response to a client's request made to the server.
+
+1. Informational responses (100 – 199)
+- 100 CONTINUE - indicates that the client should continue the request or ignore the response if the request is already finished.
+
+2. Successful responses (200 – 299)
+- 200 OK - The request succeeded. The result meaning of "success" depends on the HTTP method:
+GET: The resource has been fetched and transmitted in the message body.
+PUT or POST: The resource describing the result of the action is transmitted in the message body.
+
+- 201 CREATED - The request succeeded, and a new resource was created as a result. 
+This is typically the response sent after POST requests, or some PUT requests.
+
+3. Redirection messages (300 – 399)
+- 301 Moved Permanently - The URL of the requested resource has been changed permanently. 
+The new URL is given in the response.
+
+- 304 Not Modified - This is used for caching purposes. 
+It tells the client that the response has not been modified, so the client can continue to use 
+the same cached version of the response.
+
+- 308 Permanent Redirect - This means that the resource is now permanently located at another URI, 
+specified by the Location: HTTP Response header. 
+
+4. Client error responses (400 – 499)
+- 400 Bad Request - The server cannot or will not process the request due to something that is perceived 
+to be a client error
+
+- 401 Unauthorized - This response means "unauthenticated". That is, the client must authenticate itself to get the requested response.
+
+- 403 Forbidden - The client does not have access rights to the content; that is, it is unauthorized, 
+so the server is refusing to give the requested resource.
+
+- 404 Not Found - The server cannot find the requested resource. 
+
+5. Server error responses (500 – 599)
+- 500 Internal Server Error - The server has encountered a situation it does not know how to handle.
+
+- 501 Not Implemented - The request method is not supported by the server and cannot be handled. 
+
+- 503 Service Unavailable - The server is not ready to handle the request.
+
+----------
+What is idempotency?
+
+From a RESTful service standpoint, for an operation (or service call) to be idempotent, 
+clients can make that same call repeatedly while producing the same result. In other words, 
+making multiple identical requests has the same effect as making a single request.
+
+5) What are the advantages of statelessness in RESTful services?
+In REST architecture, statelessness refers to a communication method 
+in which the server completes every client request independently of all previous requests. 
+Clients can request resources in any order, and every request is stateless or isolated from other requests.
+
+Advantages are:
+- Easily Scalable: As there is no need for any stored information, any server can handle any client request. 
+Thus, many concurrent requests can be processed by deploying API to multiple servers.
+- Decreased Complexity: As state synchronization is not needed, it reduces the complexity.
+- Improved Performance: Server doesn’t need to keep track of client requests, which increases the performance.
+
+6) What resource naming best practices are?
+- Use nouns, preferably plural, to represent resources, aligning with the REST architectural style.
+- Avoid deep nesting and unnecessary special characters in endpoint names.
+- Separate words with hyphens and use lowercase letters to prevent confusion.
+- Don’t use file extensions in URIs. Use the Content-Type entity-header to denote the original file type.
+- Consistent naming conventions in REST API endpoints enhance readability, understanding, and troubleshooting, 
+and foster growth and scalability.
+
+7) What is Richardson Maturity Model?
+The Richardson Maturity Model is a maturity model suggested by Leonard Richardson 
+which classifies Rest APIs based on their adherence and conformity to each of the model's four levels:
+
+- Level 0 : The Swamp of POX - The lowest level of the model describes a Web API with a single URI 
+(typically POST over HTTP) accepting all the range of operations supported by the service. 
+Resources in this form cannot be well-defined. Messaging is done in XML, JSON, or other text formats. 
+
+- Level 1 : Resources - Introduces resources and allows to make requests to individual URIs (still all typically POST) 
+for separate actions instead of exposing one universal endpoint (API). The API resources are still generalized 
+but it is possible to identify the scope of each one.
+Level One design is not RESTful, yet it is organizing the API in the direction of becoming one. 
+
+- Level 2 : HTTP verbs - The system starts making use of HTTP Verbs. This allows to further specialize the resource 
+and thus narrow down the functionality of each individual operation with the service. 
+The principal separation at this level consists in splitting a given resource into two - one request for obtaining data only (GET), 
+the other for modifying the data (POST). Further granularization is also possible. GET requests only fetch data, 
+POST/PUT calls introduce new and update existing data, and DELETE requests remove or otherwise invalidate previous actions. 
+
+- Level 3 : Hypermedia controls - The last level introduces the hypermedia representation. 
+Also called HATEOAS (Hypermedia As The Engine of Application State), these are elements embedded in the response messages of resources
+which allow establishing a relation between individual data entities returned from and passed to the APIs. 
+For instance, a GET request to a hotel reservation system might return a number of available rooms 
+along with hypermedia links (these would be html hyperlink controls in the early days of the model) 
+allowing the client to book specific rooms. 
+
+
+
+
+
